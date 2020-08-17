@@ -1,0 +1,19 @@
+*** Settings ***
+Resource          流程层.txt
+Library           dcs2
+
+*** Test Cases ***
+打开百度搜索多测师、北大青鸟、黑马
+    打开百度搜索    多测师
+    打开百度搜索    北大青鸟
+    打开百度搜索    黑马
+
+test
+    #第一个用户关键字
+    ${value}    Compare    5    4
+    log    ${value}
+    #第二个用户关键字
+    ${phone}    Get Phone
+    log    ${phone}
+
+*** Keywords ***

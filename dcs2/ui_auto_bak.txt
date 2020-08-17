@@ -1,0 +1,206 @@
+*** Settings ***
+Test Teardown     kill_process
+Library           Selenium2Library
+Library           OperatingSystem
+
+*** Test Cases ***
+打开浏览器
+    Open Browser    http://www.baidu.com    chrome    #打开浏览器并且输入百度url网址
+
+元素定位方法1
+    Open Browser    http://www.baidu.com    chrome
+    #静态定位方法
+    Input Text    id=kw    多测师    #通过id定位
+    Input Text    name=wd    python    #通过name定位
+    Input Text    class=s_ipt    python    #通过class定位
+    Execute Javascript    document.getElementById("kw").value="python"    #通过JavaScript定位
+    #Ctrl+3 注释
+    #Ctrl+4 取消注释
+    #动态定位方法
+    #xpath定位
+    Input Text    xpath=//*[@id="kw"]    python
+    Input Text    xpath=//input[@id="kw"]    python
+    input text    xpath=//*[@name="wd"]    python
+    Input Text    xpath=//*[@class="s_ipt"]    python
+
+元素定位方法2
+    Open Browser    http://www.baidu.com    chrome
+    Input Text    xpath=//*[@autocomplete="off"]    python
+    Input Text    xpath=//*[@name="wd" and @class="s_ipt"]    python    #组合定位
+    Input Text    xpath=//*[@id="form"]/span[1]/input[1]    python    #父类和上上级
+    #css定位方法
+    input text    css=#kw    python    #id选择器定位
+    input text    css=.s_ipt    python    #class选择器定位
+    input text    css=[id=kw]    python
+    input text    css=[name=wd]    python
+    input text    css=[class=s_ipt]    python
+    input text    css=[autocomplete=off]    python
+    input text    css=[id=kw][name=wd]    python    #组合定位
+    input text    css=span>input    python
+    input text    css=form>span>input    python
+
+最大化浏览器
+    Open Browser    http://www.baidu.com    chrome
+    Sleep    3    #休眠3秒
+    Maximize Browser Window    #最大化浏览器
+    Sleep    3
+    Close Browser    #关闭当前浏览器
+
+重新加载页面
+    Open Browser    http://www.baidu.com    chrome
+    Sleep    2
+    Go To    http://www.duoceshi.cn    #在当前页面访问多测师
+    Sleep    2
+    Go Back    #返回上一个页面
+    Sleep    2
+    Reload Page    #重新加载页面
+    Sleep    3
+    Close Browser    #关闭浏览器
+
+discuz论坛的登录
+    Open Browser    http://192.168.1.120/bbs/forum.php    chrome
+    Sleep    2
+    Input Text    id=ls_username    admin    #输入用户名
+    Input Password    id=ls_password    123456    #输入密码
+    Comment    Click Button    登录    #直接点击登录按钮
+    Click Element    css=.pn    #class选择器
+
+点击链接
+    Open Browser    http://www.baidu.com    chrome
+    Click Link    hao123    #只要是a标签
+
+切换浏览器
+    Open Browser    http://www.baidu.com    chrome    alias=first
+    Sleep    2
+    Open Browser    http://www.jd.com    chrome    alias=second
+    Sleep    2
+    ${title}    Get Title    #获取当前窗口的title
+    log    ${title}    #停在京东窗口
+    Switch Browser    1    #通过索引切换
+    ${title1}    Get Title
+    log    ${title1}    #百度窗口
+    Switch Browser    second    #通过别名切换
+    ${title2}    Get Title
+    log    ${title2}    #回到京东窗口
+
+切换窗口
+    Open Browser    http://www.jd.com    chrome
+    Sleep    1
+    Click Link    优惠券
+    ${title}    Get Title
+    log    ${title}    #窗口在京东首页
+    Sleep    2
+    Comment    Close Window
+    Select Window    领券中心    #切换窗口
+    ${title1}    Get Title
+    log    ${title1}    #领券中心
+    Sleep    2
+    Click Link    我的订单
+    Select Window    main    #切换到首页
+    ${title2}    Get Title
+    log    ${title2}
+
+断言
+    Open Browser    http://www.baidu.com    chrome
+    ${title}    Get Title
+    log    ${title}
+    Title Should Be    百度一下，你就知道
+    ${text}    Get Text    id=s-usersetting-top
+    log    ${text}    #设置
+    ${value}    Get Value    id=su    #针对有value属性的
+    log    ${value}    #百度一下
+    ${att}    Get Element Attribute    id=kw    name
+    log    ${att}    #wd
+    ${size}    Get Window Size    #获取窗口的大小
+    log    ${size}    #(1050, 660)
+
+选择单选框和复选框
+    Open Browser    file:///E:/lesson2/3.robotframework/rf_elem/table.html    Chrome
+    Select Radio Button    sex    girl    #点击女生
+    Click Element    xpath=//*[@value="girl"]    #点击单选框
+    Click Element    xpath=//*[@value="python"]    #点击复选框
+    Select Checkbox    xpath=//*[@value="python"]
+
+携程实战
+    Open Browser    https://www.ctrip.com    chrome
+    Wait Until Page Contains Element    id=float_100_close    #直到某个元素出现
+    Click Element    id=float_100_close    #关闭广告
+    Input Text    id=HD_CityName    上海
+    Input Text    HD_CheckOut    2020-06-09    #退房日期
+    Input Text    id=HD_CheckIn    2020-06-08    #住房日期
+    Sleep    1
+    #第一种方法
+    Execute Javascript    document.getElementById("J_RoomGuestInfoTxt").value="2成人"
+    #第一种方法
+    Comment    Click Element    id=J_RoomGuestInfoTxt
+    Comment    Click Element    class=number_plus    #点击加成人
+    Comment    Click Element    id=J_RoomGuestInfoBtnOK    #点击确定
+    Comment    Select From List By Index    id=J_roomCountList    2    #选择3间,索引为0
+    Comment    Select From List By Label    id=J_roomCountList    5间    #通过label值定位
+    Select From List By Value    id=J_roomCountList    5    #通过value值定位
+    Input Text    id=HD_TxtKeyword    东方明珠
+    Select From List By Value    id=searchHotelLevelSelect    5
+    #第一种方法
+    Comment    Click Element    id=HD_Btn    #点击搜索
+    #第二种方法：
+    Press Key    id=HD_Btn    \\13    #点击enter按键
+    Sleep    2
+    Mouse Over    xpath=/html/body/div[5]/div/ul[1]/li/a/span    #把鼠标放在某某元素上
+    Sleep    2
+    Click Element    id=ctrip_hk
+
+163邮箱实战
+    Open Browser    https://mail.163.com/    chrome
+    Select Frame    xpath=//*[@id="loginDiv"]/iframe[1]    #进入iframe框
+    Sleep    2
+    Input Text    name=email    18617162994
+    Input Text    name=password    qweqwe123
+    Click Element    id=dologin
+    Sleep    2
+    Unselect Frame    #退出iframe
+    Click Link    退出
+
+QQ登录京东实战
+    Open Browser    http://www.jd.com    chrome
+    Click Link    你好，请登录
+    Click Element    xpath=//*[@id="kbCoagent"]/ul/li[1]/a/span
+    Select Frame    id=ptlogin_iframe
+    Click Element    id=img_out_296640235
+
+弹框
+    Open Browser    file:///E:/lesson2/3.robotframework/rf_elem/alert.html    chrome
+    Comment    Handle Alert    DISMISS    #点击取消
+    Handle Alert    accept    #点击确定
+    Alert Should Be Present    好
+
+页面滑动
+    Open Browser    https://www.ctrip.com    chrome
+    Sleep    2
+    Mouse Over    xpath=/html/body/div[5]/div/ul[1]/li/a/span    #把鼠标放在某某元素上
+    Sleep    2
+    Click Element    id=ctrip_hk
+    Sleep    2
+    Execute Javascript    window.scrollTo(0,10000)    #页面往下滑动到最底部
+    Sleep    2
+    Execute Javascript    window.scrollTo(0,0)    #页面往上滑动到最顶部
+
+页面断言
+    Open Browser    http://www.baidu.com    chrome
+    Page Should Contain    设置
+    Page Should Contain Element    id=kw
+    Page Should Not Contain    多测师
+    Page Should Not Contain Element    id=duoceshi
+
+获取表格数据和断言
+    Open Browser    file:///E:/lesson2/3.robotframework/rf_elem/table.html    chrome
+    Comment    ${value}    Get Table Cell    class=_table    1    1
+    Comment    log    ${value}    #学生登记报名信息
+    Assign Id To Element    name=user    duoceshi
+    Input Text    id=duoceshi    python
+    Comment    Wait Until Page Contains Element    id=duoceshi
+    Wait Until Page Does Not Contain Element    id=dcs2
+    Input Text    name=passwd    123456
+
+*** Keywords ***
+kill_process
+    OperatingSystem.Run    taskkill /f \ /im chromedriver.exe    #结束谷歌进程
